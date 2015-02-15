@@ -21,6 +21,8 @@
         <script src="bower_components/racket/racket.js"></script>
 
         <!-- our app javascript code -->
+        <script src="js/player/player.js"></script>
+        <script src="js/player/playerManager.js"></script>
         <script src="js/opspark.js"></script>
         
         <style type="text/css">
@@ -44,7 +46,7 @@
                     view = app.view,
                     fps = draw.fps('#000');
                 
-                var i, circle, circles;
+                var i, circle, circles, player, playerManager;
                 
                 i = 0;
                 circles = [];
@@ -56,6 +58,16 @@
                     view.addChild(circle);
                     i++;
                 }
+                
+                player = window.opspark.makePlayer();
+                player.x = (canvas.width - player.width) / 2;
+                player.y = (canvas.height - player.height) / 2;
+                view.addChild(player);
+                
+                circles.push(player);
+                
+                playerManager = window.opspark.makePlayerManager(player);
+                app.addUpdateable(playerManager);
                 
                 view.addChild(fps);
                 app.addUpdateable(fps);
