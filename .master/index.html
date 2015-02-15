@@ -69,6 +69,19 @@
                 playerManager = window.opspark.makePlayerManager(player);
                 app.addUpdateable(playerManager);
                 
+                //toggleCache(true);
+                
+                function toggleCache(value) {
+                    for (var i = 0; i < circles.length; i++) {
+                        var shape = circles[i];
+                        if (value) {
+                            shape.cache(-(shape.radius + 5), -(shape.radius + 5), (shape.radius + 5) * 2, (shape.radius + 5) * 2);
+                        } else {
+                            shape.uncache();
+                        }
+                    }
+                }
+                
                 view.addChild(fps);
                 app.addUpdateable(fps);
 
