@@ -12,10 +12,14 @@
         KEYCODE_A = 65,
         KEYCODE_D = 68;
     
-    window.opspark.makePlayerManager = function (player) {
-        var _player, _force;
+    window.opspark.makePlayerManager = function (player, projectileManager) {
+        var 
+            _player, 
+            _projectileManager, 
+            _force;
         
         _player = player,
+        _projectileManager = projectileManager,
         _force = 0;
         
         var _playerManager = {
@@ -53,7 +57,7 @@
                         break;
     
                     case KEYCODE_SPACE :
-                        //_projectileManager.fire(_spaceship);
+                        _projectileManager.fire(_player);
                         break;
     
                     default :

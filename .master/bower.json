@@ -24,11 +24,11 @@
   "dependencies": {
     "lodash": "~3.0.0",
     "easeljs": "~0.8.0",
-    "tweenjs": "*",
     "PreloadJS": "~0.6.0",
     "SoundJS": "~0.6.0",
     "chance": "~0.7.3",
-    "racket": "~0.0.16",
-    "opspark-draw": "~0.3.12"
+    "racket": "~0.0.18",
+    "opspark-draw": "~0.3.12",
+    "TweenJS": "~0.6.0"
   }
 }
