@@ -51,15 +51,21 @@
         
         _projectileManager = {
             fire: function (emitter) {
-                var projectile, angle;
+                var projectile, degrees;
                 
                 projectile = _pool.get();
                 projectile.rotation = emitter.rotation;
-    
-                angle = emitter.rotation;
-                projectile.velocityX = Math.cos(angle *= Math.PI/180) * (projectile.velocityMax + Math.abs(emitter.velocityX));
-                projectile.velocityY = Math.sin(angle *= Math.PI/180) * (projectile.velocityMax + Math.abs(emitter.velocityY));
-    
+                
+                //console.log(projectile.rotation);
+                
+                degrees = emitter.rotation;
+                projectile.velocityX = Math.cos(physikz.degreesToRadians(degrees)) * (projectile.velocityMax + emitter.velocityX);
+                projectile.velocityY = Math.sin(physikz.degreesToRadians(degrees)) * (projectile.velocityMax + emitter.velocityY);
+                projectile.rotationalVelocity = 0;
+                
+                //console.log(projectile.velocityX);
+                //console.log(projectile.velocityY);
+                
                 /*
                  * Additional per commission setup for projectiles.
                  */

@@ -20,7 +20,7 @@
         player.radius = radius + 3;
         
         player.getProjectilePoint = function () {
-            return player.localToGlobal(radius + 10, 0);
+            return player.localToGlobal(radius + 0, 0);
         };
         
         return _.extend(player, physikz.makeBody());

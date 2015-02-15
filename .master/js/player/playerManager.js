@@ -52,7 +52,7 @@
                         break;
     
                     case KEYCODE_UP :
-                        //_spaceship.exhaust.activate();
+                        //_player.exhaust.activate();
                         _force = 0.1;
                         break;
     
@@ -69,7 +69,7 @@
         function onKeyUp(e) {
             _player.rotationalVelocity = 0;
             _force = 0;
-            //_spaceship.exhaust.deactivate();
+            //_player.exhaust.deactivate();
         }
         
         document.onkeydown = onKeyDown;
