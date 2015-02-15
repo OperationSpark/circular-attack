@@ -44,32 +44,16 @@
                     view = app.view,
                     fps = draw.fps('#000');
                 
-                ////////////////////////////////////////////////////////////////
-                // ALL CODE GOES BELOW HERE                                   //
-                ////////////////////////////////////////////////////////////////
+                var i, circle, circles;
                 
-                // TODO 1: Declare our variables //
+                i = 0;
+                circles = [];
                 
-                
-                // TODO 2: Initialize our variables //
-                
-                
-                while (i < 100) {
-                    // TODO 3 : YOUR CODE STARTS HERE //////////////////////////
-                    
-                    
-                    
-                    
-                    // TODO 3 : YOUR CODE ENDS HERE ////////////////////////////
-                    
-                    /*
-                     * IMPORTANT NOTE: 
-                     * The statement i++; increments our counter by 1 on each loop.
-                     * If we did not do this, the conditional check of while (i < 100)
-                     * would never return false, and we would loop forever!
-                     *
-                     * Leave this as the last statement in the while loop
-                     */
+                while (i < 35) {
+                    circle = draw.randomCircleInArea(canvas, false, true, '#999', 2);
+                    physikz.addRandomVelocity(circle, canvas);
+                    circles.push(circle);
+                    view.addChild(circle);
                     i++;
                 }
                 
@@ -78,22 +62,11 @@
 
                 function update() {
                     for (var i = 0; i < circles.length; i++) {
-                        // TODO 4 : Access one circle at time from the circles Array //
+                        physikz.react(circles, 0.005);
+                        physikz.updateRadialPositionAndReboundInArea(circles[i], canvas);
                         
-                        
-                        physikz.updatePosition(circle);
-                        
-                        // TODO 5 : YOUR CODE STARTS HERE //////////////////////
-                        
-                        
-                        
-                        // YOUR TODO 5 CODE ENDS HERE //////////////////////////
                     }
                 }
-                
-            ////////////////////////////////////////////////////////////////////
-            // NO CODE BELOW HERE                                             //
-            ////////////////////////////////////////////////////////////////////
             })();
         </script>
     </body>
