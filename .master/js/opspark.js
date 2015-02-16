@@ -1,6 +1,9 @@
 (function (window) {
     window.opspark = window.opspark || {};
     
+    var 
+        createjs = window.createjs;
+        
     window.opspark.makeApp = function (updateable) {
         var 
             _stage, 
@@ -8,8 +11,8 @@
             _updateable, 
             _app;
         
-        _stage  = new createjs.Stage(canvas);
         _canvas = document.getElementById('canvas');
+        _stage  = new createjs.Stage(_canvas);
         _updateable = (updateable) ? [].concat(updateable) : [];
         
         _app = {

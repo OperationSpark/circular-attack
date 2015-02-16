@@ -14,6 +14,7 @@
 
         <!-- all core CreateJS and 3rd party libraries are listed here: -->
         <script src="bower_components/lodash/lodash.min.js"></script>
+        <script src="bower_components/proton/build/proton-1.0.0.min.js"></script>
         <script src="bower_components/easeljs/lib/easeljs-0.8.0.min.js"></script>
         <script src="bower_components/PreloadJS/lib/preloadjs-0.6.0.min.js"></script>
         <script src="bower_components/TweenJS/lib/tweenjs-0.6.0.min.js"></script>
@@ -22,6 +23,8 @@
         <script src="bower_components/racket/racket.js"></script>
 
         <!-- our app javascript code -->
+        <script src="js/particle/particleManager.js"></script>
+        <script src="js/orb/orbManager.js"></script>
         <script src="js/player/player.js"></script>
         <script src="js/player/playerManager.js"></script>
         <script src="js/projectile/projectileManager.js"></script>
@@ -48,34 +51,31 @@
                     view = app.view,
                     fps = draw.fps('#000');
                 
-                var i, circle, circles, player, playerManager;
+                createjs.Touch.enable(canvas, true, false);
                 
-                i = 0;
-                circles = [];
+                var space, orbManager, player, playerManager;
                 
-                while (i < 35) {
-                    circle = draw.randomCircleInArea(canvas, false, true, '#999', 2);
-                    physikz.addRandomVelocity(circle, canvas);
-                    circles.push(circle);
-                    view.addChild(circle);
-                    i++;
-                }
+                space = [];
+                
+                orbManager = window.opspark.makeOrbManager(view, space).addOrbs(25);
                 
                 player = window.opspark.makePlayer();
                 player.x = (canvas.width - player.width) / 2;
                 player.y = (canvas.height - player.height) / 2;
                 view.addChild(player);
                 
-                circles.push(player);
+                space.push(player);
                 
-                playerManager = window.opspark.makePlayerManager(player, window.opspark.makeProjectileManager(view, circles));
+                playerManager = window.opspark.makePlayerManager(player, 
+                    window.opspark.makeProjectileManager(view, space),
+                    window.opspark.makeParticleManager(app.stage));
                 app.addUpdateable(playerManager);
                 
                 //toggleCache(true);
                 
                 function toggleCache(value) {
-                    for (var i = 0; i < circles.length; i++) {
-                        var shape = circles[i];
+                    for (var i = 0; i < space.length; i++) {
+                        var shape = space[i];
                         if (value) {
                             shape.cache(-(shape.radius + 5), -(shape.radius + 5), (shape.radius + 5) * 2, (shape.radius + 5) * 2);
                         } else {
@@ -88,10 +88,9 @@
                 app.addUpdateable(fps);
 
                 function update() {
-                    for (var i = 0; i < circles.length; i++) {
-                        physikz.react(circles, 0.005);
-                        physikz.updateRadialPositionAndReboundInArea(circles[i], canvas);
-                        
+                    for (var i = 0; i < space.length; i++) {
+                        physikz.updateRadialPositionAndReboundInArea(space[i], canvas);
+                        physikz.interact(space, 0.005);
                     }
                 }
             })();
