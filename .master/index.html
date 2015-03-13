@@ -82,7 +82,7 @@
                 function update() {
                     for (var i = 0; i < space.length; i++) {
                         physikz.updateRadialPositionAndReboundInArea(space[i], canvas);
-                        physikz.interact(space, 0.005);
+                        physikz.updateSpace(space, 0.005);
                     }
                 }
             })();
