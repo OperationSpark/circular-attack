@@ -23,12 +23,8 @@
         <script src="bower_components/racket/racket.js"></script>
 
         <!-- our app javascript code -->
-        <script src="js/particle/particleManager.js"></script>
-        <script src="js/orb/orbManager.js"></script>
         <script src="js/player/player.js"></script>
         <script src="js/player/playerManager.js"></script>
-        <script src="js/projectile/projectileManager.js"></script>
-        <script src="js/hud/hud.js"></script>
         <script src="js/opspark.js"></script>
         
         <style type="text/css">
@@ -39,52 +35,88 @@
         <div>
             <canvas id="canvas" width="500" height="500"></canvas>
         </div>
-        <script id="motion-poem">
+        <script id="main">
             (function(){
                 'use strict';
                 
                 var 
-                    Proton = window.Proton,
                     opspark = window.opspark,
                     draw = opspark.draw,
-                    physikz = opspark.racket.physikz,
                     
                     app = opspark.makeApp({update: update}),
                     canvas = app.canvas, 
                     view = app.view,
                     fps = draw.fps('#000');
                 
-                var space, player, hud, orbManager, playerManager, particleManager;
-                
-                space = [];
-                hud = opspark.makeHud();
-                particleManager = opspark.makeParticleManager(app.stage);
-                orbManager = opspark.makeOrbManager(view, space, hud, particleManager).addOrbs(25);
-                
-                player = opspark.makePlayer(null, null, particleManager);
+                // TODO 1 : Create and add the player to the stage //
+                var player;
+                player = opspark.makePlayer();
                 view.addChild(player);
-                space.push(player);
                 
-                playerManager = opspark.makePlayerManager(player,
-                    view, 
-                    space,
-                    hud,
-                    opspark.makeProjectileManager(view, space, particleManager),
-                    particleManager.makePlayerEmitter());
-                    
-                app.addUpdateable(playerManager);
-                
-                view.addChild(hud);
+                // TODO 2 : Create and add the player manager //
+                app.addUpdateable(opspark.makePlayerManager(player));
                 
                 view.addChild(fps);
                 app.addUpdateable(fps);
                 
                 function update() {
-                    for (var i = 0; i < space.length; i++) {
-                        physikz.updateRadialPositionAndReboundInArea(space[i], canvas);
-                        physikz.interact(space, 0.005);
-                    }
+                    updatePlayerPosition();
+                    checkBoundaries();
                 }
+                
+                // TODO 3 : Solve updating the player's position //
+                function updatePlayerPosition() {
+                    player.x += player.velocityX;
+                    player.y += player.velocityY;
+                    player.rotation += player.rotationalVelocity;
+                }
+                
+                
+                function checkBoundaries() {
+                    var radius = player.radius;
+                    var top = 0;
+                    var left = 0;
+                    var right = canvas.width;
+                    var bottom = canvas.height;
+                    
+                    /*
+                     * TODO 4 : Replace "false" with the calculation 
+                     * to test the right-side border.
+                     */
+                    if (player.x + radius > right) {
+                        player.x = right - radius;
+                        player.velocityX *= -1;
+                    } 
+                    
+                    /*
+                     * TODO 5 : Replace "false" with the calculation to 
+                     * test the left-side border
+                     */
+                    else if (player.x - radius < left) {
+                        player.x = left + radius;
+                        player.velocityX *= -1;
+                    }
+                    
+                    /*
+                     * TODO 6 : Replace "false" with the calculation to 
+                     * test the bottom border
+                     */
+                    if (player.y + radius > bottom) {
+                        player.y = bottom - radius;
+                        player.velocityY *= -1;
+                    }
+                    
+                    /*
+                     * TODO 7 : Replace "false" with the calculation to 
+                     * test the top border
+                     */
+                    else if (player.y - radius < top) {
+                        player.y = top + radius;
+                        player.velocityY *= -1;
+                    }
+                    
+                }
+                
             })();
         </script>
     </body>
