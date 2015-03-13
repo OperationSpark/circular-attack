@@ -32,29 +32,32 @@
                 }
                 return _app;
             },
-
+            
             update: function(e) {
-                // always update the stage last //
                 _stage.update();
-                
                 for (var i = 0; i < _updateable.length; i++) {
                     _updateable[i].update();
                 }
             }
         };
         
+        window.addEventListener('resize', onResize, false);
+        function onResize(e) {
+            setSize();
+            _app.update(e);
+        }
         
-        window.addEventListener('resize', resizeCanvas, false);
-        function resizeCanvas(e) {
+        function setSize() {
             _canvas.width = window.innerWidth;
             _canvas.height = window.innerHeight;
-            if (e) { _app.update(e) }
         }
-        resizeCanvas();
+        setSize();
         
         _app.stage.addChild(_app.view);
         createjs.Ticker.setFPS(60);
         createjs.Ticker.on('tick', _app.update);
+        
+        // createjs.Touch.enable(_canvas, true, false);
 
         return _app;
     };

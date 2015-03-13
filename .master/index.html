@@ -28,6 +28,7 @@
         <script src="js/player/player.js"></script>
         <script src="js/player/playerManager.js"></script>
         <script src="js/projectile/projectileManager.js"></script>
+        <script src="js/hud/hud.js"></script>
         <script src="js/opspark.js"></script>
         
         <style type="text/css">
@@ -43,50 +44,41 @@
                 'use strict';
                 
                 var 
-                    draw = window.opspark.draw,
-                    physikz = window.opspark.racket.physikz,
+                    Proton = window.Proton,
+                    opspark = window.opspark,
+                    draw = opspark.draw,
+                    physikz = opspark.racket.physikz,
                     
-                    app = window.opspark.makeApp({update: update}),
+                    app = opspark.makeApp({update: update}),
                     canvas = app.canvas, 
                     view = app.view,
                     fps = draw.fps('#000');
                 
-                createjs.Touch.enable(canvas, true, false);
-                
-                var space, orbManager, player, playerManager;
+                var space, player, hud, orbManager, playerManager, particleManager;
                 
                 space = [];
+                hud = opspark.makeHud();
+                particleManager = opspark.makeParticleManager(app.stage);
+                orbManager = opspark.makeOrbManager(view, space, hud, particleManager).addOrbs(25);
                 
-                orbManager = window.opspark.makeOrbManager(view, space).addOrbs(25);
-                
-                player = window.opspark.makePlayer();
-                player.x = (canvas.width - player.width) / 2;
-                player.y = (canvas.height - player.height) / 2;
+                player = opspark.makePlayer(null, null, particleManager);
                 view.addChild(player);
-                
                 space.push(player);
                 
-                playerManager = window.opspark.makePlayerManager(player, 
-                    window.opspark.makeProjectileManager(view, space),
-                    window.opspark.makeParticleManager(app.stage));
+                playerManager = opspark.makePlayerManager(player,
+                    view, 
+                    space,
+                    hud,
+                    opspark.makeProjectileManager(view, space, particleManager),
+                    particleManager.makePlayerEmitter());
+                    
                 app.addUpdateable(playerManager);
                 
-                //toggleCache(true);
-                
-                function toggleCache(value) {
-                    for (var i = 0; i < space.length; i++) {
-                        var shape = space[i];
-                        if (value) {
-                            shape.cache(-(shape.radius + 5), -(shape.radius + 5), (shape.radius + 5) * 2, (shape.radius + 5) * 2);
-                        } else {
-                            shape.uncache();
-                        }
-                    }
-                }
+                view.addChild(hud);
                 
                 view.addChild(fps);
                 app.addUpdateable(fps);
-
+                
                 function update() {
                     for (var i = 0; i < space.length; i++) {
                         physikz.updateRadialPositionAndReboundInArea(space[i], canvas);
@@ -96,5 +88,4 @@
             })();
         </script>
     </body>
-
 </html>

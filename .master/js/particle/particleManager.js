@@ -3,58 +3,94 @@
     
     window.opspark = window.opspark || {};
     
-    var 
-        createjs = window.createjs,
-        draw = window.opspark.draw,
-        physikz = window.opspark.racket.physikz;
+    var Proton = window.Proton;
     
-    // TODO : UPDATE so the factory returns instances of managers per asset, etc //
     window.opspark.makeParticleManager = function (stage) {
-        var _particleManager;
+        var 
+            _proton,
+            _renderer,
+            _particleManager;
+            
+        _proton = new Proton;
+        _renderer = new Proton.Renderer('easel', _proton, stage);
+        _renderer.start();
         
-        var context;
-        var proton;
-        var renderer;
-        var emitter;
+        function tick() {
+            requestAnimationFrame(tick);
+            _proton.update();
+        }
+        tick();
         
-        context = canvas.getContext('2d');
+        function makeEmitter(radiusMin, radiusMax, color, velocity, behaviours) {
+            var 
+                emitter, 
+                protonEmitter;
+                
+            protonEmitter = makeProtonEmitter(radiusMin, radiusMax, color, velocity, behaviours);
+            
+            emitter = {
+                protonEmitter: protonEmitter,
+                
+                emit: function (point, emitTime) {
+                    protonEmitter.emit(emitTime);
+                    protonEmitter.p.x = point.x;
+                    protonEmitter.p.y = point.y;
+                },
+                
+                stop: function () {
+                    protonEmitter.stopEmit();
+                },
+                
+                destroy: function () {
+                    _proton.removeEmitter(protonEmitter);
+                }
+            };
+            return emitter;
+        }
         
-        createProton();
+        function makeProtonEmitter(radiusMin, radiusMax, color, velocity, behaviours) {
+            var emtr;
+            
+            emtr = new Proton.Emitter();
+            emtr.rate = new Proton.Rate(new Proton.Span(1, 2), .012);
+            emtr.addInitialize(velocity || new Proton.Velocity(new Proton.Span(1, 2), new Proton.Span(0, 360), 'polar'));
+            emtr.addInitialize(new Proton.Mass(1));
+            emtr.addInitialize(new Proton.Radius(radiusMin || 2, radiusMax|| 4));
+            emtr.addInitialize(new Proton.Life(0.5, 0.5));
+            emtr.addBehaviour(new Proton.Collision(emtr));
+            emtr.addBehaviour(new Proton.Color(color || "rgba(0, 0, 0, 0.2)"));
+            
+            if (behaviours) {
+                behaviours.forEach(function (behaviour) {
+                    emtr.addBehaviour(behaviour);
+                });
+            }
+            
+            emtr.addBehaviour(new Proton.CrossZone(new Proton.RectZone(0, 0, canvas.width, canvas.height), 'bound'));
+            emtr.damping = 0.02;
+            
+            _proton.addEmitter(emtr);
+            
+            return emtr;
+        }
         
-        function createProton() {
-            proton = new Proton;
-            emitter = new Proton.Emitter();
-            emitter.rate = new Proton.Rate(new Proton.Span(1, 2), .012);
-            emitter.addInitialize(new Proton.Mass(1));
-            emitter.addInitialize(new Proton.Radius(2, 4));
-            emitter.addInitialize(new Proton.Life(0.5, 0.5));
-            emitter.addInitialize(new Proton.Velocity(new Proton.Span(1, 2), [45, 135, 225, 315], 'polar'));
-            emitter.addBehaviour(new Proton.Collision(emitter));
-            emitter.addBehaviour(new Proton.Color("rgba(0, 0, 0, 0.2)"));
-            emitter.addBehaviour(new Proton.CrossZone(new Proton.RectZone(0, 0, canvas.width, canvas.height), 'bound'));
-            emitter.damping = 0.02;
-            proton.addEmitter(emitter);
-            renderer = new Proton.Renderer('easel', proton, stage);
-            renderer.start();
+        /*
+         * Some game defaults
+         */
+        function makePlayerEmitter() {
+            return makeEmitter(null, null, null, new Proton.Velocity(new Proton.Span(1, 2), [45, 135, 225, 315], 'polar'));
         }
         
         _particleManager = {
-            show: function (point) {
-                emitter.emit();
-                emitter.p.x = point.x;
-                emitter.p.y = point.y;
+            makeEmitter: makeEmitter,
+            makePlayerEmitter: makePlayerEmitter,
+            
+            removeEmitter: function (emitter) {
+                _proton.removeEmitter(emitter);
             },
             
-            update: function () {
-                window.requestAnimationFrame(_particleManager.update);
-                proton.update();
-            },
-            
-            stop: function () {
-                emitter.stopEmit();
-            }
+            proton: _proton
         };
-        _particleManager.update();
         return _particleManager;
     };
 }(window));

@@ -8,24 +8,26 @@
         draw = window.opspark.draw,
         physikz = window.opspark.racket.physikz;
     
-    window.opspark.makeProjectileManager = function (view, space) {
-        var 
-            _view, 
-            _space,
+    window.opspark.makeProjectileManager = function (view, space, particleManager) {
+        var
             _pool,
             _objects,
             _projectileManager;
             
-            _objects = [], 
-            _view = view,
-            _space = space;
+            _objects = []; 
         
-        function makeObject() {
-            var projectile = _.extend(draw.circle(5, '#ff0000'), physikz.makeBody());
-            projectile.volatility = 1;
-            //projectile.cache(-(projectile.radius), -(projectile.radius), (projectile.radius) * 2, (projectile.radius) * 2);
+        function makeProjectile() {
+            var projectile = _.extend(draw.circle(5, '#ff0000'), physikz.makeBody('projectile'));
+            
             // TODO : get from settings JSON //
+            projectile.volatility = 1;
             projectile.velocityMax = 10;
+            
+            projectile.handleCollision = function (impact) {
+                // TODO : Consider if particles are necessary here //
+                // particleManager.makeEmitter(1, 2, '#FF0000').emit({x: projectile.x, y: projectile.y}, 0.5);
+            };
+            
             return projectile;
         }
         
@@ -40,13 +42,13 @@
                 if (_objects.length > 0) {
                     return _objects.pop();
                 }
-                return makeObject();
+                return makeProjectile();
             },
         
             recycle: function (object) {
-                var index = _space.indexOf(object);
+                var index = space.indexOf(object);
                 if (index !== -1) {
-                    _space.splice(index, 1);
+                    space.splice(index, 1);
                 }
                 object.x = -(object.width);
                 object.alpha = 1;
@@ -79,8 +81,8 @@
                 
                 createjs.Tween.get(projectile, {override: true}).wait(500).to({alpha: 0, scaleX: 0.1, scaleY: 0.1}, 1000, createjs.Ease.linear).call(onTweenComplete);
                 
-                _view.addChild(projectile);
-                _space.push(projectile);
+                view.addChild(projectile);
+                space.push(projectile);
             }
         };
         return _projectileManager;
