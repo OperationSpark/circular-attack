@@ -8,7 +8,7 @@
         draw = window.opspark.draw,
         physikz = window.opspark.racket.physikz;
     
-    window.opspark.makeOrbManager = function (view, space, hud, particleManager) {
+    window.opspark.makeOrbManager = function (view, space) {
         var 
             _pool,
             _objects,
@@ -22,8 +22,6 @@
                 orb = draw.randomCircleInArea(canvas, false, true, '#999', 2);
                 physikz.addRandomVelocity(orb, canvas);
                 
-                hud.updateOf(orb.radius);
-                
                 /*
                  * We know the max radius of the radomly drawn circles is 20.
                  */
@@ -35,12 +33,7 @@
                     if (orb.integrity > 0) {
                         orb.integrity -= impact;
                         if (orb.integrity <= 0) {
-                            particleManager
-                                .makeEmitter(2, 3, "rgba(214, 36, 84, 0.2)", null, [
-                                    new Proton.RandomDrift(5, 0, .35)])
-                                .emit({x: orb.x, y: orb.y}, 0.5);
                             _pool.recycle(orb);
-                            hud.updateScore(orb.radius);
                         }
                     }
                 };

@@ -12,7 +12,7 @@
         KEYCODE_A = 65,
         KEYCODE_D = 68;
     
-    window.opspark.makePlayerManager = function (player, view, space, hud, projectileManager, emitter) {
+    window.opspark.makePlayerManager = function (player, view, space) {
         var _force, _activeKeys;
         
         _force = 0, 
@@ -39,15 +39,11 @@
         }
         
         function activate() {
-            player.on('exploded', onPlayerExploded);
-            player.on('damaged', onPlayerDamaged);
             document.onkeydown = document.onkeyup = onKeyActivity;
         }
         
         function deactive() {
             onKeyUp();
-            player.removeEventListener('exploded', onPlayerExploded);
-            player.removeEventListener('damaged', onPlayerDamaged);
             document.onkeydown = document.onkeyup = null;
         }
         
@@ -70,44 +66,16 @@
             }
             
             if (_activeKeys[KEYCODE_UP]) { 
-                emitter.emit(player.getExhaustPoint());
                 _force = 0.1;
             }
             
             if (_activeKeys[KEYCODE_SPACE]) { 
-                projectileManager.fire(player);
             }
         }
         
         function onKeyUp(e) {
             player.rotationalVelocity = 0;
             _force = 0;
-            emitter.stop();
-        }
-        
-        function onPlayerExploded(e) {
-            deactive();
-            
-            var i, id;
-            
-            hud.setIntegrity(0);
-            player.alpha = 0;
-            
-            i = 0;
-            id = setInterval(function(){
-              player.explosion.emit({x: player.x, y: player.y});
-              if (i > 60) {
-                  window.clearInterval(id);
-                  player.explosion.stop();
-                  space.splice(space.indexOf(player), 1);
-                  view.removeChild(player);
-              }
-              i++;
-            }, 17);
-        }
-        
-        function onPlayerDamaged(e) {
-            hud.setIntegrity(player.integrity);
         }
         
         return _playerManager;

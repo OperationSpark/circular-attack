@@ -54,37 +54,83 @@
                     view = app.view,
                     fps = draw.fps('#000');
                 
-                var space, player, hud, orbManager, playerManager, particleManager;
+                var space, spring, player, orbManager, playerManager;
                 
-                space = [];
-                hud = opspark.makeHud();
-                particleManager = opspark.makeParticleManager(app.stage);
-                orbManager = opspark.makeOrbManager(view, space, hud, particleManager).addOrbs(25);
+                // TODO : 8 Initialize variables //
                 
-                player = opspark.makePlayer(null, null, particleManager);
+                
+                player = opspark.makePlayer();
                 view.addChild(player);
                 space.push(player);
                 
-                playerManager = opspark.makePlayerManager(player,
-                    view, 
-                    space,
-                    hud,
-                    opspark.makeProjectileManager(view, space, particleManager),
-                    particleManager.makePlayerEmitter());
-                    
+                playerManager = opspark.makePlayerManager(player, view, space);
                 app.addUpdateable(playerManager);
                 
-                view.addChild(hud);
+                function updateSpace() {
+                    for(var i = space.length - 1; i > 0; i--) {
+                        var bodyA = space[i];
+                        for(var j = i - 1; j > -1; j--) {
+                            var 
+                                bodyB,
+                                distanceX,
+                                distanceY,
+                                distance,
+                                hitZone;
+                            
+                            bodyB = space[j];
+                            
+                            /*
+                             * TODO 9 : Calculate the distance between 
+                             * bodyA and bodyB.
+                             */
+                            
+                            
+                            /*
+                             * TODO 10: Find the minimum distance between the 
+                             * bodies for a collision to be true.
+                             */
+                            
+                            
+                            /*
+                             * TODO 11: Replace "false" with a collision test.
+                             */
+                            if(false) {
+                                collide(bodyA, bodyB, hitZone, distance, distanceX, distanceY);
+                            }
+                        }
+                    }
+                }
                 
-                view.addChild(fps);
-                app.addUpdateable(fps);
+                function collide(bodyA, bodyB, hitZone, distance, distanceX, distanceY) {
+                    /*
+                     * Springing: A spring’s acceleration is proportional 
+                     * to its distance from a target.
+                     */
+                    var targetX = bodyA.x + distanceX / distance * hitZone;
+                    var targetY = bodyA.y + distanceY / distance * hitZone;
+                    var accelerationX = (targetX - bodyB.x) * spring;
+                    var accelerationY = (targetY - bodyB.y) * spring;
+                    bodyA.velocityX -= accelerationX;
+                    bodyA.velocityY -= accelerationY;
+                    bodyB.velocityX += accelerationX;
+                    bodyB.velocityY += accelerationY;
+                }
                 
                 function update() {
                     for (var i = 0; i < space.length; i++) {
                         physikz.updateRadialPositionAndReboundInArea(space[i], canvas);
-                        physikz.updateSpace(space, 0.005);
+                    }
+                    
+                    var j = 30;
+                    while (j) {
+                        updateSpace();
+                        j--;
                     }
                 }
+                
+                view.addChild(fps);
+                app.addUpdateable(fps);
+                
             })();
         </script>
     </body>

@@ -9,7 +9,7 @@
         draw = window.opspark.draw,
         physikz = window.opspark.racket.physikz;
     
-    window.opspark.makePlayer = function (startX, startY, particleManager) {
+    window.opspark.makePlayer = function (startX, startY) {
         var 
             player, 
             radius;
@@ -28,8 +28,6 @@
         player.x = startX || (canvas.width - player.width) / 2;
         player.y = startY || (canvas.height - player.height) / 2;
         
-        player.explosion = particleManager.makeEmitter(5, 8, null, new Proton.Velocity(new Proton.Span(4, 2), new Proton.Span(0, 360), 'polar'), [new Proton.RandomDrift(5, 0, .35)]);
-        
         player = _.extend(player, physikz.makeBody('player', 0, 0, 0, 1, .1));
         
         player.getProjectilePoint = function () {
@@ -41,13 +39,7 @@
         };
         
         player.handleCollision = function (impact) {
-            if (player.integrity > 0) {
-                player.integrity -= impact;
-                player.dispatchEvent('damaged');
-                if (player.integrity <= 0) {
-                    player.dispatchEvent('exploded');
-                }
-            }
+            
         };
         
         return player;
