@@ -44,7 +44,6 @@
                 'use strict';
                 
                 var 
-                    Proton = window.Proton,
                     opspark = window.opspark,
                     draw = opspark.draw,
                     physikz = opspark.racket.physikz,
@@ -65,10 +64,32 @@
                 view.addChild(player);
                 space.push(player);
                 
-                playerManager = opspark.makePlayerManager(player,
-                    view, 
-                    space,
-                    hud,
+                player.handleCollision = function (impact, body) {
+                    console.log('impact: ' + impact);
+                    
+                    /*
+                     * TODO 13 : Replace "false" with a check 
+                     * to ensure the player is still intact.
+                     */
+                    if (false) {
+                        console.log('player is still intact');
+                        
+                        // TODO 14 : Add damage to the player //
+                        
+                        player.dispatchEvent('damaged');
+                        
+                        /*
+                         * TODO 15 : Replace "false" with a check 
+                         * to see if the player should explode.
+                         */
+                        if (false) {
+                            player.dispatchEvent('exploded');
+                        }
+                    }
+                };
+                
+                playerManager = opspark.makePlayerManager(
+                    player, view, space, hud,
                     opspark.makeProjectileManager(view, space, particleManager),
                     particleManager.makePlayerEmitter());
                     
@@ -76,15 +97,15 @@
                 
                 view.addChild(hud);
                 
-                view.addChild(fps);
-                app.addUpdateable(fps);
-                
                 function update() {
                     for (var i = 0; i < space.length; i++) {
                         physikz.updateRadialPositionAndReboundInArea(space[i], canvas);
                         physikz.updateSpace(space, 0.005);
                     }
                 }
+                
+                view.addChild(fps);
+                app.addUpdateable(fps);
             })();
         </script>
     </body>
