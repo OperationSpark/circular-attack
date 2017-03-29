@@ -30,6 +30,6 @@
     "racket": "0.0.22",
     "opspark-draw": "0.3.13",
     "TweenJS": "0.6.0",
-    "proton": "1.0.0"
+    "proton": "alpha1.0.0"
   }
 }
