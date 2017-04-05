@@ -23,13 +23,13 @@
   ],
   "dependencies": {
     "lodash": "~3.2.0",
-    "easeljs": "~0.8.0",
-    "PreloadJS": "~0.6.0",
-    "SoundJS": "~0.6.0",
-    "chance": "~0.7.3",
-    "racket": "~0.0.22",
-    "opspark-draw": "~0.3.12",
-    "TweenJS": "~0.6.0",
-    "proton": "*"
+    "easeljs": "0.8.0",
+    "PreloadJS": "0.6.0",
+    "SoundJS": "0.6.0",
+    "chance": "0.7.3",
+    "racket": "0.0.22",
+    "opspark-draw": "0.3.13",
+    "TweenJS": "0.6.0",
+    "proton": "alpha1.0.0"
   }
 }
